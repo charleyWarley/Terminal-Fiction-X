@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scripts/player.gd" type="Script" id=1]
+[ext_resource path="res://asdf1Beta_HighLimbsGeoSG2.material" type="Material" id=2]
+
+[sub_resource type="BoxShape" id=4]
+extents = Vector3( 0.291656, 0.305881, 0.809684 )
+
+[sub_resource type="CapsuleMesh" id=2]
+radius = 0.3
+mid_height = 1.2
+radial_segments = 8
+rings = 6
+
+[sub_resource type="CubeMesh" id=3]
+size = Vector3( 0.1, 0.5, 0.1 )
+
+[node name="player" type="KinematicBody"]
+script = ExtResource( 1 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+shape = SubResource( 4 )
+
+[node name="bodyPivot" type="Spatial" parent="."]
+
+[node name="body" type="MeshInstance" parent="bodyPivot"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 2 )
+
+[node name="3P" type="Spatial" parent="bodyPivot/body"]
+transform = Transform( 1, 0, 0, 0, -0.12251, 0.992467, 0, -0.992467, -0.12251, 0, 3.11803, -1.62095 )
+
+[node name="headPivot" type="Spatial" parent="bodyPivot/body"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.309001, -0.64912 )
+
+[node name="1P" type="Spatial" parent="bodyPivot/body/headPivot"]
+transform = Transform( 1, 0, 0, 0, 0.992467, 0.12251, 0, -0.12251, 0.992467, 0, 0.971831, 3.42703 )
+
+[node name="pointer" type="MeshInstance" parent="bodyPivot/body/headPivot"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 3 )
+skeleton = NodePath("../..")
+material/0 = ExtResource( 2 )
+
+[node name="camPivot" type="Spatial" parent="bodyPivot/body/headPivot"]
+transform = Transform( 1, 0, 0, 0, 0.992467, 0.12251, 0, -0.12251, 0.992467, 0, 0.971831, 3.42703 )
+
+[node name="ClippedCamera" type="ClippedCamera" parent="bodyPivot/body/headPivot/camPivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
