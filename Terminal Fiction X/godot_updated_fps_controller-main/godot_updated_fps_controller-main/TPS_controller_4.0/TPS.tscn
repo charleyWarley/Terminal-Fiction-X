@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/player.gd" type="Script" id=1]
+[ext_resource path="res://groundLight.tscn" type="PackedScene" id=2]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.25
@@ -50,5 +51,9 @@ material/0 = null
 
 [node name="pointer" type="MeshInstance" parent="body"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7212, -0.479604 )
+cast_shadow = 0
 mesh = SubResource( 3 )
 material/0 = null
+
+[node name="groundLight" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, -0.0447875, 0.998997, 0, -0.998997, -0.0447875, 0.41829, 0.774716, -0.773146 )

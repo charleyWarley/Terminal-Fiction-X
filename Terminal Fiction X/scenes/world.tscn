@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://godot_updated_fps_controller-main/godot_updated_fps_controller-main/TPS_controller_4.0/TPS.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/kalle.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://scripts/world.gd" type="Script" id=4]
 [ext_resource path="res://testtexture.tres" type="Material" id=5]
 [ext_resource path="res://npc.tscn" type="PackedScene" id=6]
+[ext_resource path="res://skyLight.tscn" type="PackedScene" id=7]
 
 [sub_resource type="CylinderMesh" id=1]
 top_radius = 0.2
@@ -34,116 +35,14 @@ script = ExtResource( 4 )
 [node name="kalle" parent="." instance=ExtResource( 2 )]
 
 [node name="player" parent="kalle" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1428, 0, -53.5234 )
 
-[node name="SpotLight" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, -0.0447876, 0.998997, 0, -0.998997, -0.0447876, -5.18391, 25.5373, -5.41353 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 49.3213
-spot_angle = 61.4592
+[node name="lights" type="Spatial" parent="kalle"]
 
-[node name="OmniLight" type="OmniLight" parent="SpotLight"]
-transform = Transform( 1, 0, 0, 0, 1, -5.96046e-08, 0, 5.96046e-08, 1, 11.6455, -0.944263, -24.1014 )
-shadow_enabled = true
-shadow_reverse_cull_face = true
-omni_range = 9.24601
+[node name="area1" type="Spatial" parent="kalle/lights"]
 
-[node name="OmniLight2" type="OmniLight" parent="SpotLight"]
-transform = Transform( 1, 0, 0, 0, 1, -6.70552e-08, 0, 6.70552e-08, 1, -29.1589, -0.944263, -24.1014 )
-omni_range = 9.24601
-
-[node name="OmniLight3" type="OmniLight" parent="SpotLight"]
-transform = Transform( 1, 0, 0, 0, 1, -1.04308e-07, 0, 1.04308e-07, 1, -15.7328, -98.477, -28.474 )
-omni_range = 13.0684
-
-[node name="SpotLight2" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, -0.0447876, 0.998997, 0, -0.998997, -0.0447876, -3.2247, 25.0554, 46.078 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 50.7086
-spot_angle = 79.2309
-
-[node name="SpotLight3" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742369, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -10.0704, 13.4781, 83.5896 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 20.6437
-spot_angle = 36.7058
-
-[node name="SpotLight4" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742369, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -85.9668, 5.18116, 120.287 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 31.4226
-spot_angle = 59.8339
-
-[node name="SpotLight5" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742369, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -77.2025, 9.54904, 89.9453 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 20.6437
-spot_angle = 36.7058
-
-[node name="SpotLight6" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742369, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -57.2583, 13.7513, 30.6363 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 25.7898
-spot_angle = 61.1378
-
-[node name="SpotLight7" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742368, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -105.629, 28.3061, -22.4983 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 50.2335
-spot_angle = 57.4144
-
-[node name="SpotLight11" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742368, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -133.389, 43.4154, -149.557 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 84.1059
-spot_angle = 51.3652
-
-[node name="SpotLight12" type="SpotLight" parent="."]
-transform = Transform( 0.996064, 0.0814219, 0.0350405, -0.0717963, 0.50922, 0.857637, 0.0519871, -0.856776, 0.513061, -133.389, 90.0998, -149.557 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 84.1059
-spot_angle = 51.3652
-
-[node name="SpotLight8" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742368, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -7.2495, 34.2216, -160.531 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 72.9932
-spot_angle = 72.2192
-
-[node name="SpotLight9" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742369, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -24.4098, 15.2984, -55.7508 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 23.0394
-spot_angle = 25.9951
-
-[node name="SpotLight10" type="SpotLight" parent="."]
-transform = Transform( 0.986167, 0.165587, 0.00742369, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -17.7342, 13.3886, 117.649 )
-light_energy = 1.587
-shadow_enabled = true
-shadow_reverse_cull_face = true
-spot_range = 23.0394
-spot_angle = 49.0675
+[node name="skyLight" parent="kalle/lights/area1" instance=ExtResource( 7 )]
+transform = Transform( 0.986167, 0.165587, 0.00742368, 0, -0.0447876, 0.998997, 0.165753, -0.985178, -0.0441681, -5.81496, 27.9869, -5.67987 )
 
 [node name="thingy" type="RigidBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -127.599, 13.0568, -166.493 )

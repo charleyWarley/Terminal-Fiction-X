@@ -1,0 +1,10 @@
+[gd_scene format=2]
+
+[node name="groundLight" type="OmniLight"]
+transform = Transform( 1, 0, 0, 0, -0.0447875, 0.998997, 0, -0.998997, -0.0447875, 11.0812, -1.47566, -3.39077 )
+light_indirect_energy = 0.0
+shadow_enabled = true
+shadow_color = Color( 0.0666667, 0.0235294, 0.117647, 1 )
+shadow_bias = 0.01
+shadow_reverse_cull_face = true
+omni_range = 9.24601
