@@ -4,11 +4,11 @@ enum moveTypes {move2D, move3D}
 enum accels {AIR = 1, DEFAULT = 10, CAMERA = 40}
 enum speeds {SLOW = 1, WALK = 4, RUN = 8}
 
-const DRAG_GROUND : float = 0.7
-const DRAG_AIR : float = 0.65
-const JUMP_BUFFER : float = 0.08
+const DRAG_GROUND := 0.7
+const DRAG_AIR := 0.65
+const JUMP_BUFFER := 0.08
 const JUMP_POWER : int = 25
-const GRAVITY : int = 4
+const GRAVITY := 2.8
 const reachVector := Vector2(100, 0)
 const hitVector := Vector2(16, 0)
 const closeVector := Vector2(10, 0)
@@ -33,7 +33,6 @@ var isAirborne := false
 var isFalling := false
 var wasGrounded := false
 var velocity : Vector3
-var movement : Vector3
 var snap = Vector3.UP
 onready var head = $Head
 onready var body = $body
@@ -73,7 +72,7 @@ func _physics_process(delta):
 	var direction = (inputVector.x * transform.basis.x) + (inputVector.z * transform.basis.z)
 	#check_raycast()
 	check_collisions()
-	if !isHanging: set_velocity(direction, delta)
+	set_velocity(direction, delta)
 	apply_rotation(inputVector, direction, delta)
 	check_mode()
 
@@ -95,8 +94,21 @@ func set_velocity(direction, delta):
 	velocity += direction.normalized() * speed
 	set_yVelocity()
 	apply_drag(drag, delta)
+	
+	if moveType == moveTypes.move2D:
+		if direction != Vector3.ZERO:
+			if t < 1: t += 0.055
+			velocity.x = velocity.linear_interpolate(direction * speed / 2, t * delta * 5).x
+			velocity.z = velocity.linear_interpolate(direction * speed, t * delta * 10).z
+		else:
+			t = 0
+			velocity.x = lerp(velocity.x, 0, 2)
+			velocity.z = lerp(velocity.z, 0, 2)
+	elif moveType == moveTypes.move3D: #set up tank controls later
+		pass
+
 	velocity = velocity.linear_interpolate(direction * speed, accel * delta)
-	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, deg2rad(45))
+	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, deg2rad(60))
 
 
 func apply_drag(drag, delta):
@@ -131,17 +143,6 @@ func check_raycast():
 func apply_rotation(_inputVector, direction, delta):
 	if direction != Vector3.ZERO:
 		body.rotation.y = lerp_angle(body.rotation.y, atan2(-direction.x, -direction.z), angular_velocity * delta)
-	if moveType == moveTypes.move2D:
-		if direction != Vector3.ZERO:
-			if t < 1: t += 0.055
-			velocity.x = velocity.linear_interpolate(direction * speed / 2, t * delta * 5).x
-			velocity.z = velocity.linear_interpolate(direction * speed, t * delta * 10).z
-		else:
-			t = 0
-			velocity.x = lerp(velocity.x, 0, 2)
-			velocity.z = lerp(velocity.z, 0, 2)
-	elif moveType == moveTypes.move3D: #set up tank controls later
-		pass
 
 
 func set_yVelocity():
@@ -167,7 +168,7 @@ func set_yVelocity():
 		elif get_cur_time() - timeLeftGround < JUMP_BUFFER:
 			velocity.y = JUMP_POWER
 		if isGrounded: velocity.y = JUMP_POWER
-	else: apply_gravity()
+	else: if !isHanging: apply_gravity()
 	#if isGrounded and velocity.y > 0: velocity.y = 0
 	if !wasGrounded and isGrounded and ((get_cur_time() - timePressedJump) < JUMP_BUFFER):
 		velocity.y = JUMP_POWER

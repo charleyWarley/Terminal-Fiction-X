@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://godot_updated_fps_controller-main/godot_updated_fps_controller-main/TPS_controller_4.0/TPS.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/kalle.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/world.tres" type="Environment" id=3]
 [ext_resource path="res://scripts/world.gd" type="Script" id=4]
 [ext_resource path="res://testtexture.tres" type="Material" id=5]
+[ext_resource path="res://npc.tscn" type="PackedScene" id=6]
 
 [sub_resource type="CylinderMesh" id=1]
 top_radius = 0.2
@@ -178,6 +179,65 @@ material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="halfHeight"]
 shape = SubResource( 5 )
+
+[node name="npc" parent="." instance=ExtResource( 6 )]
+
+[node name="npc2" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -31.5198, 0, 2.01605 )
+
+[node name="npc3" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5159, 0, -0.687644 )
+
+[node name="npc4" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5159, 0, 4.84959 )
+
+[node name="npc5" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -38.7106, 0, 4.84959 )
+
+[node name="npc6" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -34.1541, 0, -4.08829 )
+
+[node name="npc7" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -34.1541, 0, -19.2634 )
+
+[node name="npc8" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -94.4089, 2.52879, -19.2634 )
+
+[node name="npc9" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -97.0247, 2.52879, -19.2634 )
+
+[node name="npc10" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -97.0247, 2.52879, -22.1075 )
+
+[node name="npc11" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -98.7381, 2.52879, -20.5479 )
+
+[node name="npc12" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -113.872, 4.71601, -20.5479 )
+
+[node name="npc13" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -113.872, 4.71601, -28.7588 )
+
+[node name="npc14" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -107.228, 4.71601, -28.7588 )
+
+[node name="npc15" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -107.228, 4.71601, -13.0144 )
+
+[node name="npc16" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -104.314, 4.71601, -2.41541 )
+
+[node name="npc17" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -104.314, 4.71601, -6.07319 )
+
+[node name="npc18" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -70.0488, 8.56787, 50.1619 )
+
+[node name="npc19" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -70.0488, 8.56787, 42.9023 )
+
+[node name="npc20" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -70.0488, 8.56787, 40.85 )
 
 [editable path="kalle"]
 [editable path="kalle/player"]
