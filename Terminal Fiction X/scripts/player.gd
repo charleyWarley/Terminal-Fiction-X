@@ -1,8 +1,7 @@
 extends KinematicBody
-enum modes {GROUND, HANGING, AIR}
-enum moveTypes {move2D, move3D}
+
 enum accels {AIR = 1, DEFAULT = 10, CAMERA = 40}
-enum speeds {SLOW = 1, WALK = 4, RUN = 8}
+enum speeds {SLOW = 1, WALK = 5, RUN = 7}
 
 const DRAG_GROUND := 0.7
 const DRAG_AIR := 0.65
@@ -13,14 +12,17 @@ const reachVector := Vector2(100, 0)
 const hitVector := Vector2(16, 0)
 const closeVector := Vector2(10, 0)
 
-var moveType : int = moveTypes.move2D
+var moveType : int = stateManager.moveTypes.move2D
 var speed : int = speeds.WALK
-var mode : int = modes.GROUND setget set_mode
+var mode : int = stateManager.mode
 var accel : int = accels.DEFAULT
 var cam_accel : int = accels.CAMERA
 var angular_velocity : int = 12
-var pushForce : int = 11
 var grabForce : int = 7
+var far := 4.0
+var close := 3.5
+
+var pushForce := 0.8
 var timePressedHit := 0.0
 var timePressedJump := 0.0
 var timeLeftGround := 0.0
@@ -32,21 +34,24 @@ var isGrounded := false
 var isAirborne := false
 var isFalling := false
 var wasGrounded := false
+var canInteract := false
 var velocity : Vector3
 var snap = Vector3.UP
-onready var head = $Head
-onready var body = $body
-onready var camPivot = $Head/CamPivot
+export(NodePath) onready var head = get_node(head)
+export(NodePath) onready var body = get_node(body)
+export(NodePath) onready var dolly = get_node(dolly)
+export(NodePath) onready var cam = get_node(cam)
 
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED) #hides the cursor
 	body.set_as_toplevel(true) #makes the body's transforms independent from the kinematic body
-
+	set_camera_position("walk")
 
 func _input(event):
 	#get mouse input for rotation
-	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	var motion = event as InputEventMouseMotion
+	if motion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(deg2rad(-event.relative.x * mouse_sense))
 		head.rotate_x(deg2rad(-event.relative.y * mouse_sense))
 		head.rotation.x = clamp(head.rotation.x, deg2rad(-45), deg2rad(45))
@@ -54,6 +59,12 @@ func _input(event):
 
 func _process(delta):
 	#physics interpolation to reduce jitter on high refresh-rate monitors
+	var camPivot
+	match stateManager.view:
+			stateManager.views.TP: 
+				camPivot = dolly
+				cam.translation.z = close
+			stateManager.views.FP: camPivot = cam
 	var fps = Engine.get_frames_per_second()
 	if fps > Engine.iterations_per_second:
 		camPivot.set_as_toplevel(true)
@@ -75,8 +86,7 @@ func _physics_process(delta):
 	set_velocity(direction, delta)
 	apply_rotation(inputVector, direction, delta)
 	check_mode()
-
-
+	
 func get_inputVector() -> Vector3:
 	#returns the intended direction from the player's input
 	var moveVector = Vector3()
@@ -85,17 +95,29 @@ func get_inputVector() -> Vector3:
 	return moveVector.normalized() if moveVector.length() > 1 else moveVector
 
 
+func set_camera_position(cameraSpot):
+	var nextSpot
+	match cameraSpot:
+		"run":
+			set_speed(speeds.RUN)
+			nextSpot = far
+		"walk":
+			set_speed(speeds.WALK)
+			nextSpot = close
+	cam.translation.z = nextSpot
+
+
 func set_velocity(direction, delta):
 	var drag : float
-	if Input.is_action_pressed("run"): set_speed(speeds.RUN)
-	else: set_speed(speeds.WALK)
+	if Input.is_action_pressed("run"): set_camera_position("run")
+	elif Input.is_action_just_released("run"): set_camera_position("walk")
 	if isGrounded: drag = DRAG_GROUND
 	else: drag = DRAG_AIR
 	velocity += direction.normalized() * speed
 	set_yVelocity()
 	apply_drag(drag, delta)
 	
-	if moveType == moveTypes.move2D:
+	if moveType == stateManager.moveTypes.move2D:
 		if direction != Vector3.ZERO:
 			if t < 1: t += 0.055
 			velocity.x = velocity.linear_interpolate(direction * speed / 2, t * delta * 5).x
@@ -104,11 +126,11 @@ func set_velocity(direction, delta):
 			t = 0
 			velocity.x = lerp(velocity.x, 0, 2)
 			velocity.z = lerp(velocity.z, 0, 2)
-	elif moveType == moveTypes.move3D: #set up tank controls later
+	elif moveType == stateManager.moveTypes.move3D: #set up tank controls later
 		pass
 
 	velocity = velocity.linear_interpolate(direction * speed, accel * delta)
-	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, deg2rad(60))
+	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, deg2rad(60), false)
 
 
 func apply_drag(drag, delta):
@@ -127,9 +149,9 @@ func check_mode():
 	#	if isAirborne: isAirborne = false
 	#	if isFalling: isFalling = false
 	wasGrounded = isGrounded
-	if isGrounded: set_mode(modes.GROUND)
-	if isAirborne: set_mode(modes.AIR)
-	if isHanging: set_mode(modes.HANGING)
+	if isGrounded: stateManager.set_mode(stateManager.modes.GROUND)
+	if isAirborne: stateManager.set_mode(stateManager.modes.AIR)
+	if isHanging: stateManager.set_mode(stateManager.modes.HANGING)
 
 
 
@@ -184,23 +206,11 @@ func check_collisions():
 	for index in get_slide_count():
 			var collision = get_slide_collision(index)
 			var collider = collision.collider
-			if (collision.normal.z != 0 or collision.normal.x != 0):
-					if Input.is_action_pressed("hit"): 
-						print(collider.name)
-						isHanging = true
-					else: isHanging = false
+			if collider.is_in_group("moveable"): collider.emit_signal("bumped")
+			
 			if collision.normal.y == -1: 
 				if isAirborne: isAirborne = false
 				if isFalling: isFalling = false
-
-func set_mode(newMode):
-	if mode == newMode: return
-	mode = newMode
-	#match mode:
-	#	modes.AIR: print("mode: air")
-	#	modes.GROUND: print("mode: ground")
-	#	modes.HANGING: print("mode: hanging")
-
 
 func set_speed(newSpeed):
 	if speed == newSpeed: return
@@ -209,3 +219,4 @@ func set_speed(newSpeed):
 
 func get_cur_time() -> float:
 	return OS.get_ticks_msec() / 1000.0
+
