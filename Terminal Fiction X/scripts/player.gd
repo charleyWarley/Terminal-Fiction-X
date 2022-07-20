@@ -7,20 +7,21 @@ const DRAG_GROUND := 0.7
 const DRAG_AIR := 0.65
 const JUMP_BUFFER := 0.08
 const JUMP_POWER : int = 25
-const GRAVITY := 2.8
+const GRAVITY := 6.8
 const reachVector := Vector2(100, 0)
 const hitVector := Vector2(16, 0)
 const closeVector := Vector2(10, 0)
 
-var moveType : int = stateManager.moveTypes.move2D
 var speed : int = speeds.WALK
 var mode : int = stateManager.mode
 var accel : int = accels.DEFAULT
 var cam_accel : int = accels.CAMERA
 var angular_velocity : int = 12
 var grabForce : int = 7
-var far := 4.0
-var close := 3.5
+var far := 1.6
+var close := 1.2
+var highAngle := 0.8
+var lowAngle := 0.4
 
 var pushForce := 0.8
 var timePressedHit := 0.0
@@ -37,44 +38,52 @@ var wasGrounded := false
 var canInteract := false
 var velocity : Vector3
 var snap = Vector3.UP
-export(NodePath) onready var head = get_node(head)
+var camPivot
+export(NodePath) onready var pov = get_node(pov)
 export(NodePath) onready var body = get_node(body)
 export(NodePath) onready var dolly = get_node(dolly)
 export(NodePath) onready var cam = get_node(cam)
 
+signal camera_shake(intensity)
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED) #hides the cursor
 	body.set_as_toplevel(true) #makes the body's transforms independent from the kinematic body
 	set_camera_position("walk")
+	connect("camera_shake", pov, "_on_camera_shake")
 
 func _input(event):
 	#get mouse input for rotation
 	var motion = event as InputEventMouseMotion
 	if motion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(deg2rad(-event.relative.x * mouse_sense))
-		head.rotate_x(deg2rad(-event.relative.y * mouse_sense))
-		head.rotation.x = clamp(head.rotation.x, deg2rad(-45), deg2rad(45))
+		pov.rotate_x(deg2rad(-event.relative.y * mouse_sense))
+		pov.rotation.x = clamp(pov.rotation.x, deg2rad(-45), deg2rad(45))
 
 
 func _process(delta):
-	#physics interpolation to reduce jitter on high refresh-rate monitors
-	var camPivot
+	if Input.is_action_just_pressed("change_type"): 
+		emit_signal("camera_shake", 1)
+		stateManager.change_view()
 	match stateManager.view:
 			stateManager.views.TP: 
 				camPivot = dolly
 				cam.translation.z = close
-			stateManager.views.FP: camPivot = cam
+				pov.translation.y = highAngle
+			stateManager.views.FP:
+				camPivot = cam
+				pov.translation.y = lowAngle
+	#physics interpolation to reduce jitter on high refresh-rate monitors
 	var fps = Engine.get_frames_per_second()
 	if fps > Engine.iterations_per_second:
 		camPivot.set_as_toplevel(true)
-		camPivot.global_transform.origin = camPivot.global_transform.origin.linear_interpolate(head.global_transform.origin, cam_accel * delta)
+		camPivot.global_transform.origin = camPivot.global_transform.origin.linear_interpolate(pov.global_transform.origin, cam_accel * delta)
 		camPivot.rotation.y = rotation.y
-		camPivot.rotation.x = head.rotation.x
+		camPivot.rotation.x = pov.rotation.x
 		body.global_transform.origin = body.global_transform.origin.linear_interpolate(global_transform.origin, cam_accel * delta)
 	else:
 		camPivot.set_as_toplevel(false)
-		camPivot.global_transform = head.global_transform
+		camPivot.global_transform = pov.global_transform
 		body.global_transform.origin = global_transform.origin
 
 
@@ -95,16 +104,17 @@ func get_inputVector() -> Vector3:
 	return moveVector.normalized() if moveVector.length() > 1 else moveVector
 
 
-func set_camera_position(cameraSpot):
-	var nextSpot
-	match cameraSpot:
+func set_camera_position(spot):
+	match spot:
 		"run":
 			set_speed(speeds.RUN)
-			nextSpot = far
+			spot = far
+			print("running")
 		"walk":
 			set_speed(speeds.WALK)
-			nextSpot = close
-	cam.translation.z = nextSpot
+			spot = close
+			print("walking")
+	if stateManager.view == stateManager.views.TP: pov.translation.z = spot
 
 
 func set_velocity(direction, delta):
@@ -117,7 +127,7 @@ func set_velocity(direction, delta):
 	set_yVelocity()
 	apply_drag(drag, delta)
 	
-	if moveType == stateManager.moveTypes.move2D:
+	if stateManager.moveType == stateManager.moveTypes.move2D:
 		if direction != Vector3.ZERO:
 			if t < 1: t += 0.055
 			velocity.x = velocity.linear_interpolate(direction * speed / 2, t * delta * 5).x
@@ -126,9 +136,8 @@ func set_velocity(direction, delta):
 			t = 0
 			velocity.x = lerp(velocity.x, 0, 2)
 			velocity.z = lerp(velocity.z, 0, 2)
-	elif moveType == stateManager.moveTypes.move3D: #set up tank controls later
+	elif stateManager.moveType == stateManager.moveTypes.move3D: #set up tank controls later
 		pass
-
 	velocity = velocity.linear_interpolate(direction * speed, accel * delta)
 	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, deg2rad(60), false)
 
@@ -180,7 +189,6 @@ func set_yVelocity():
 	if releasedJump:
 		if sign(velocity.y) == -1: velocity.y *= 0.4
 		snap = Vector3.UP
-		
 	elif pressedJump:
 		timePressedJump = get_cur_time()
 		print("jump pressed")
@@ -191,7 +199,6 @@ func set_yVelocity():
 			velocity.y = JUMP_POWER
 		if isGrounded: velocity.y = JUMP_POWER
 	else: if !isHanging: apply_gravity()
-	#if isGrounded and velocity.y > 0: velocity.y = 0
 	if !wasGrounded and isGrounded and ((get_cur_time() - timePressedJump) < JUMP_BUFFER):
 		velocity.y = JUMP_POWER
 

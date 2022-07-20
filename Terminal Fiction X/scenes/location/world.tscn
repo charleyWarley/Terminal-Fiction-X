@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://scenes/actors/player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/location/kalle.tscn" type="PackedScene" id=2]
@@ -10,6 +10,9 @@
 [ext_resource path="res://scenes/interactable/food sack.tscn" type="PackedScene" id=8]
 [ext_resource path="res://scenes/location/archway.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/interactable/gameboy.tscn" type="PackedScene" id=10]
+[ext_resource path="res://scenes/location/fullHeight.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scenes/location/halfHeight.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scenes/location/slope.tscn" type="PackedScene" id=13]
 
 [sub_resource type="PrismMesh" id=8]
 left_to_right = 1.0
@@ -39,15 +42,15 @@ environment = ExtResource( 3 )
 
 [node name="kalle" parent="." instance=ExtResource( 2 )]
 
-[node name="slope" type="StaticBody" parent="kalle"]
+[node name="slope0" type="StaticBody" parent="kalle"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.71801, 1.18908, 3.8367 )
 
-[node name="MeshInstance" type="MeshInstance" parent="kalle/slope"]
+[node name="MeshInstance" type="MeshInstance" parent="kalle/slope0"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.76837e-07 )
 mesh = SubResource( 8 )
 material/0 = ExtResource( 5 )
 
-[node name="CollisionShape" type="CollisionShape" parent="kalle/slope"]
+[node name="CollisionShape" type="CollisionShape" parent="kalle/slope0"]
 shape = SubResource( 9 )
 
 [node name="slope2" type="StaticBody" parent="kalle"]
@@ -61,16 +64,14 @@ material/0 = ExtResource( 5 )
 [node name="CollisionShape" type="CollisionShape" parent="kalle/slope2"]
 shape = SubResource( 9 )
 
-[node name="fullHeight" type="StaticBody" parent="kalle"]
-transform = Transform( 0.942525, 0, 0.334136, 0, 1, 0, -0.334136, 0, 0.942525, -11.7688, -0.539198, -18.1074 )
+[node name="fullHeight" parent="kalle" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10.7421, -0.697408, -14.3116 )
 
-[node name="MeshInstance" type="MeshInstance" parent="kalle/fullHeight"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.410037, 0 )
-mesh = SubResource( 4 )
-material/0 = null
+[node name="halfHeight" parent="kalle" instance=ExtResource( 12 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8.76433, -1.49346, -14.361 )
 
-[node name="CollisionShape" type="CollisionShape" parent="kalle/fullHeight"]
-shape = SubResource( 5 )
+[node name="slope" parent="kalle" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12.6012, -1.09141, -14.2971 )
 
 [node name="fullHeight2" type="StaticBody" parent="kalle"]
 transform = Transform( 0.99978, 0, -0.0209773, 0, 1, 0, 0.0788871, 0, 3.75977, 5.36748, -1.3185, 1.18567 )
@@ -114,17 +115,6 @@ mesh = SubResource( 4 )
 material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="kalle/fullHeight3"]
-shape = SubResource( 5 )
-
-[node name="halfHeight" type="StaticBody" parent="kalle"]
-transform = Transform( 0.942525, 0, 0.334136, 0, 1, 0, -0.334136, 0, 0.942525, -9.87357, -1.34644, -18.7793 )
-
-[node name="MeshInstance" type="MeshInstance" parent="kalle/halfHeight"]
-use_in_baked_light = true
-mesh = SubResource( 6 )
-material/0 = null
-
-[node name="CollisionShape" type="CollisionShape" parent="kalle/halfHeight"]
 shape = SubResource( 5 )
 
 [node name="halfHeight2" type="StaticBody" parent="kalle"]
@@ -325,42 +315,42 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.63917, 3.51768, 14.0565 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8.76393, 3.51768, 14.0565 )
 
 [node name="gameboy" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.73977 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65353, 0, -5.20465 )
 
 [node name="gameboy2" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.591326, 0, -1.73977 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.06221, 0, -5.20465 )
 
 [node name="gameboy3" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.591326, 0, -2.22502 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.06221, 0, -5.6899 )
 
 [node name="gameboy4" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12308, 0, -1.98991 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.53045, 0, -5.45479 )
 
 [node name="gameboy5" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12308, 0, -2.87302 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.53045, 0, -6.3379 )
 
 [node name="gameboy6" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.306632, 0, -2.87302 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.96017, 0, -6.3379 )
 
 [node name="gameboy7" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.306632, 0, -1.07867 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.96017, 0, -4.54355 )
 
 [node name="gameboy8" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.58661, 0, -1.07867 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.24014, 0, -4.54355 )
 
 [node name="gameboy9" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.58661, 0, -2.33217 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.24014, 0, -5.79705 )
 
 [node name="gameboy10" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08861, 0, -2.33217 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.56492, 0, -5.79705 )
 
 [node name="gameboy11" parent="kalle/objects" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08861, 0, -2.76229 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.56492, 0, -6.22717 )
 
 [node name="npcs" type="Spatial" parent="."]
 
 [node name="npc" parent="npcs" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.50765, -0.899095, -2.27856 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.84664, 1.04671, -14.1355 )
 
 [node name="archway" parent="." instance=ExtResource( 9 )]
 transform = Transform( 0.113411, 0, -0.993548, 0, 1, 0, 0.993548, 0, 0.113411, 4.13165, -2.62457, 6.41955 )

@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://materials/textures/testtexture.tres" type="Material" id=1]
+
+[sub_resource type="CubeMesh" id=6]
+material = ExtResource( 1 )
+size = Vector3( 2, 0.875, 2 )
+
+[sub_resource type="BoxShape" id=5]
+extents = Vector3( 1, 0.438, 1 )
+
+[node name="halfHeight" type="StaticBody"]
+transform = Transform( 0.942525, 0, 0.334136, 0, 1, 0, -0.334136, 0, 0.942525, -9.87357, -1.34644, -18.7793 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+use_in_baked_light = true
+mesh = SubResource( 6 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 5 )

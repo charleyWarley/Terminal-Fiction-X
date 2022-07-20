@@ -17,6 +17,7 @@ config/icon="res://materials/textures/icon.png"
 [autoload]
 
 stateManager="*res://scripts/stateManager.gd"
+Global="*res://scripts/global.gd"
 
 [input]
 
